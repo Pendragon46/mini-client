@@ -12,6 +12,7 @@
 # define MINICLIENT_HPP
 
 # include <iostream>
+# include <unistd.h>
 # include <errno.h>
 # include <string>
 # include <cstring>
@@ -19,7 +20,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 
-# define PORT "80"
+# define PORT "4242"
 # define DATALEN 1080
 
 class MiniClient

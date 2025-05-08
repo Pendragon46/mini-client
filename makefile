@@ -8,7 +8,7 @@ CXX = c++
 
 CXXFLAG = -Wall -Wextra -Werror -I . -std=c++98
 
-NAME = miniserv
+NAME = MiniClient
 
 
 $(OBJ_DIR)/%.o :	%.cpp

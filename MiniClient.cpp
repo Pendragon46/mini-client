@@ -38,7 +38,7 @@ bool	MiniClient::init(char *ip, int &socketfd, struct addrinfo **addr)
 	socketfd = socket(hint.ai_family, hint.ai_socktype, hint.ai_protocol);
 	if ( getaddrinfo(ip, PORT, &hint, addr) != 0 )
 	{
-		std::cerr << gai_strerror(errno) << std::endl;
+		std::cerr << "getaddrinfo : " << gai_strerror(errno) << std::endl;
 		return (false);
 	}
 	if ( socketfd < 0 )

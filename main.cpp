@@ -30,5 +30,6 @@ int main ( int argc, char **argv )
 	}
 	res = MiniClient::getData(servSocket);
 	std::cout << "Data :\n" << res << std::endl; 
+	close(servSocket);
 	return (0);
 }
