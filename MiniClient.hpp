@@ -20,7 +20,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 
-# define PORT "7000"
+# define PORT "4242"
 # define DATALEN 1080
 
 class MiniClient
