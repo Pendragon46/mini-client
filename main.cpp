@@ -29,7 +29,8 @@ int main ( int argc, char **argv )
 		return (1);
 	}
 	res = MiniClient::getData(servSocket);
-	std::cout << "Data :\n" << res << std::endl; 
+	std::cout << "Data :\n" <<  res<< std::endl;
+	freeaddrinfo(servInfo);
 	close(servSocket);
 	return (0);
 }

@@ -31,16 +31,18 @@ MiniClient &MiniClient::operator=( const MiniClient &toCopy)
 bool	MiniClient::init(char *ip, int &socketfd, struct addrinfo **addr)
 {
 	struct addrinfo hint;
+	struct addrinfo res;
 
 	memset(&hint, 0, sizeof(hint));
 	hint.ai_family = AF_INET;
 	hint.ai_socktype = SOCK_STREAM;
-	socketfd = socket(hint.ai_family, hint.ai_socktype, hint.ai_protocol);
 	if ( getaddrinfo(ip, PORT, &hint, addr) != 0 )
 	{
-		std::cerr << "getaddrinfo : " << gai_strerror(errno) << std::endl;
+		std::cerr << gai_strerror(errno) << std::endl;
 		return (false);
 	}
+	res = **addr;
+	socketfd = socket(res.ai_family, res.ai_socktype, res.ai_protocol);
 	if ( socketfd < 0 )
 	{
 		std::cerr << "CreateSocket : " << strerror(errno) << std::endl;
@@ -58,6 +60,7 @@ std::string	MiniClient::getData(int &socketfd)
 
 	while (status > 0)
 	{
+		memset(tmp, 0, sizeof(char) * DATALEN);
 		status = recv(socketfd, tmp, DATALEN, 0);
 		if (status == -1)
 		{
