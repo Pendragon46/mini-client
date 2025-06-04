@@ -23,22 +23,47 @@ MiniClient &MiniClient::operator=( const MiniClient &toCopy)
 	return (*this);
 }
 
+std::string	MiniClient::request = "GET / HTTP/1.1\r\n\r\n";
+
+/********************************/
+/*			Class Function 		*/
+/********************************/
+void	MiniClient::getIP(std::string argv, std::string &ip, std::string &port)
+{
+	size_t	column;
+
+	column = argv.rfind(':');
+	if (column != std::string::npos)
+	{
+		ip = argv.substr(0, column);
+		port = argv.substr(column + 1);
+	}
+	else
+	{
+		ip = argv;
+		port = "80";
+	}
+}
+
+
 /********************************/
 /*		  Static Function		*/
 /********************************/
 
 
-bool	MiniClient::init(char *ip, int &socketfd, struct addrinfo **addr)
+bool	MiniClient::init(char *argv, int &socketfd, struct addrinfo **addr)
 {
 	struct addrinfo hint;
 	struct addrinfo res;
+	std::string		ip, port;
 
+	getIP(argv, ip, port);
 	memset(&hint, 0, sizeof(hint));
 	hint.ai_family = AF_INET;
 	hint.ai_socktype = SOCK_STREAM;
-	if ( getaddrinfo(ip, PORT, &hint, addr) != 0 )
+	if ( getaddrinfo(ip.c_str(), port.c_str(), &hint, addr) != 0 )
 	{
-		std::cerr << gai_strerror(errno) << std::endl;
+		std::cerr << "getaddrinfo : " <<gai_strerror(errno) << std::endl;
 		return (false);
 	}
 	res = **addr;
@@ -51,8 +76,37 @@ bool	MiniClient::init(char *ip, int &socketfd, struct addrinfo **addr)
 	return (true);
 }
 
+bool	MiniClient::sendRequest(int &socketfd, char *requestFilename)
+{
+	std::ifstream	file;
+	std::string		tmp;
 
-std::string	MiniClient::getData(int &socketfd)
+	if (requestFilename != NULL)
+	{
+		request.clear();
+		file.open(requestFilename);
+		if (file.is_open() == false)
+		{
+			std::cerr << "Open ( " << requestFilename << " ) : " << strerror(errno) << std::endl;
+			return (false);
+		}
+		while (std::getline(file, tmp))
+			request += tmp + "\r\n";
+		if (file.eof() != true)
+		{
+			std::cerr << "Error on read : " << strerror(errno) << std::endl;
+			return (false);
+		}
+	}
+	if (send(socketfd, request.c_str(), request.length(), 0) < 0)
+	{
+		std::cerr << "Send : " << strerror(errno) << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
+bool	MiniClient::getData(int &socketfd)
 {
 	std::string	res;
 	char		tmp[DATALEN];
@@ -65,9 +119,11 @@ std::string	MiniClient::getData(int &socketfd)
 		if (status == -1)
 		{
 			std::cerr << "Recv : " << strerror(errno) << std::endl;
-			return ("");
+			return (false);
 		}
+		// 	std::cout << tmp ;
 		res += tmp;
 	}
-	return (res);
+	std::cout << "Data :\n" << res << std::endl;
+	return (true);
 }

@@ -12,6 +12,7 @@
 # define MINICLIENT_HPP
 
 # include <iostream>
+# include <fstream>
 # include <errno.h>
 # include <string>
 # include <unistd.h>
@@ -20,19 +21,21 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 
-# define PORT "4242"
 # define DATALEN 1080
 
 class MiniClient
 {
 	private:
 		MiniClient();
-		MiniClient( const MiniClient &toCopy);
+		MiniClient( const MiniClient &toCopy );
 		~MiniClient();
 		MiniClient &operator=( const MiniClient &toCopy);
-
+		
 	public:
+		static std::string	request;
+		static void			getIP(std::string argv, std::string &ip, std::string &port);
 		static bool			init(char *ip, int &socketfd, struct addrinfo **addr);
-		static std::string	getData(int &socketfd);
+		static bool			sendRequest(int &socketfd, char *requestFilename);
+		static bool			getData(int &socketfd);
 };
 #endif

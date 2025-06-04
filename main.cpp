@@ -16,9 +16,9 @@ int main ( int argc, char **argv )
 	struct 	addrinfo	*servInfo;
 	std::string			res;
 
-	if (argc != 2)
+	if (argc < 2)
 	{
-		std::cerr << "Usage: " << argv[0] << " <IP address>." << std::endl;
+		std::cerr << "Usage: " << argv[0] << " <IP address:Port> [Request header]." << std::endl;
 		return (1);
 	}
 	if (MiniClient::init(argv[1], servSocket, &servInfo) == false)
@@ -28,8 +28,9 @@ int main ( int argc, char **argv )
 		std::cerr << "Connect : " << strerror(errno) << std::endl;
 		return (1);
 	}
-	res = MiniClient::getData(servSocket);
-	std::cout << "Data :\n" <<  res<< std::endl;
+	if ( MiniClient::sendRequest(servSocket, argv[2]) == false )
+		return (1);
+	MiniClient::getData(servSocket);
 	freeaddrinfo(servInfo);
 	close(servSocket);
 	return (0);
