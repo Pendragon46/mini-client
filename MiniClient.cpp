@@ -110,10 +110,10 @@ bool	MiniClient::sendRequest(int &socketfd, char *requestFilename)
 bool	MiniClient::getData(int &socketfd)
 {
 	std::string	res;
-	char		tmp[DATALEN];
+	char		tmp[DATALEN + 1];
 	int			status = DATALEN;
 
-	while (status == DATALEN)
+	while ( status == DATALEN )
 	{
 		memset(tmp, 0, sizeof(char) * DATALEN);
 		status = recv(socketfd, tmp, DATALEN, 0);
@@ -122,6 +122,7 @@ bool	MiniClient::getData(int &socketfd)
 			std::cerr << "Recv : " << strerror(errno) << std::endl;
 			return (false);
 		}
+		tmp[DATALEN] = '\0';
 		res += tmp;
 	}
 	std::cout << "Data :\n" << res << std::endl;
